@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>Redis UI</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+</head>
+<body>
+  <div class="container mt-5">
+    <h1 class="mb-4">Chartered</h1>
+
+    <div class="card mb-4">
+      <div class="card-header">
+        Set Key
+      </div>
+      <div class="card-body">
+        <form id="setForm" action="/set" method="post">
+          <div class="form-group">
+            <label for="key">Key:</label>
+            <input type="text" id="key" name="key" class="form-control" required>
+          </div>
+          <div class="form-group">
+            <label for="value">Value:</label>
+            <input type="text" id="value" name="value" class="form-control" required>
+          </div>
+          <button type="submit" class="btn btn-primary">Set</button>
+        </form>
+        <div id="setResponse" class="mt-2"></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header">
+        Get Key
+      </div>
+      <div class="card-body">
+        <form id="getKeyForm" action="/get/" method="get">
+          <div class="form-group">
+            <label for="getkey">Key:</label>
+            <input type="text" id="getkey" name="key" class="form-control" required>
+          </div>
+          <button type="submit" class="btn btn-info">Get</button>
+        </form>
+        <div id="getResponse" class="mt-2"></div>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.3/dist/umd/popper.min.js"></script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+  <script>
+    $(document).ready(function() {
+      $('#getKeyForm').on('submit', function(event) {
+        event.preventDefault(); // Prevent default form submission
+        const key = $('#getkey').val();
+        $.ajax({
+          url: `/get/${key}`,
+          type: 'GET',
+          success: function(response) {
+            $('#getResponse').html(`<p><strong>Value:</strong> ${response}</p>`);
+          },
+          error: function(error) {
+            $('#getResponse').html(`<p class="text-danger">Error: ${error.responseText || 'Key not found'}</p>`);
+          }
+        });
+      });
+
+      $('#setForm').on('submit', function(event) {
+        event.preventDefault();
+        const key = $('#key').val();
+        const value = $('#value').val();
+        $.ajax({
+          url: '/set',
+          type: 'POST',
+          data: { key: key, value: value },
+          success: function(response) {
+            $('#setResponse').html(`<p class="text-success">${response}</p>`);
+          },
+          error: function(error) {
+            $('#setResponse').html(`<p class="text-danger">Error: ${error.responseText}</p>`);
+          }
+        });
+      });
+    });
+  </script>
+</body>
+</html>
