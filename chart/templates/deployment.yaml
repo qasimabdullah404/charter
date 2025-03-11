@@ -1,0 +1,41 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  creationTimestamp: null
+  labels:
+    app: {{  .Release.Name }}
+  name: {{ .Release.Name }}-deploy
+  namespace: {{ .Values.namespace.name }}
+spec:
+  replicas: {{ .Values.replica.count }}
+  selector:
+    matchLabels:
+      app: {{  .Release.Name }}
+  template:
+    metadata:
+      labels:
+        app: {{  .Release.Name }}
+    spec:
+      # volumes:
+      #   - name: {{ .Release.Name }}-vol
+      #     configMap:
+      #       name: {{ .Release.Name }}-cm
+      containers:
+      - image: {{ .Values.image.repository}}:{{ .Values.image.tag }}
+        name: {{ .Release.Name }}
+        env:
+          - name: REDIS_HOST
+            value: "{{ .Release.Name }}-redis-master.test.svc.cluster.local"
+          - name: REDIS_PORT
+            value: "6379"
+          - name: NODE_OPTIONS
+            value: "--dns-result-order=ipv4first"
+        # volumeMounts:
+        #   - name: {{ .Release.Name }}-vol
+        #     mountPath: /usr/share/nginx/html/index.html
+        #     subPath: index.html
+        {{- include "nginx.resources" . | nindent 8 }}
+        livenessProbe:
+          {{- toYaml .Values.deployment.probes.livenessProbe | nindent 12 }}
+        readinessProbe:
+          {{- toYaml .Values.deployment.probes.readinessProbe | nindent 12 }}

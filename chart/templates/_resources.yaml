@@ -1,0 +1,4 @@
+{{- define "nginx.resources" -}}
+resources:
+  {{- toYaml .Values.resources | nindent 2 }}
+{{- end -}}

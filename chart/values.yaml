@@ -1,0 +1,53 @@
+namespace:
+  create: true
+  name: test
+replica:
+  count: 3
+image:
+  repository: docker.io/qaxim/charter-io
+  tag: "20250311223230"
+resources:
+  requests:
+    cpu: "100m"
+    memory: "128Mi"
+  limits:
+    cpu: "500m"
+    memory: "512Mi"
+service:
+  type: NodePort
+  port: 8081
+  targetPort: 3000
+  protocol: TCP
+
+redis:
+  networkPolicy:
+    enabled: false
+  namespaceOverride: test
+  auth:
+    enabled: false
+  master:
+    persistence:
+      enabled: false
+  replica:
+    replicaCount: 1
+  configuration: |
+    bind 0.0.0.0
+
+deployment:
+  probes:
+    livenessProbe:
+      httpGet:
+        path: /
+        port: 3000
+      initialDelaySeconds: 15
+      periodSeconds: 10
+      timeoutSeconds: 5
+      failureThreshold: 3
+    readinessProbe:
+      httpGet:
+        path: /
+        port: 3000
+      initialDelaySeconds: 15
+      periodSeconds: 5
+      timeoutSeconds: 3
+      failureThreshold: 3
