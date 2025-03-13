@@ -16,25 +16,13 @@ spec:
       labels:
         app: {{  .Release.Name }}
     spec:
-      # volumes:
-      #   - name: {{ .Release.Name }}-vol
-      #     configMap:
-      #       name: {{ .Release.Name }}-cm
       containers:
       - image: {{ .Values.image.repository}}:{{ .Values.image.tag }}
         name: {{ .Release.Name }}
-        env:
-          - name: REDIS_HOST
-            value: "{{ .Release.Name }}-redis-master.test.svc.cluster.local"
-          - name: REDIS_PORT
-            value: "6379"
-          - name: NODE_OPTIONS
-            value: "--dns-result-order=ipv4first"
-        # volumeMounts:
-        #   - name: {{ .Release.Name }}-vol
-        #     mountPath: /usr/share/nginx/html/index.html
-        #     subPath: index.html
-        {{- include "nginx.resources" . | nindent 8 }}
+        envFrom:
+          - configMapRef:
+              name: {{ .Release.Name }}-env-config
+        {{- include "charter.resources" . | nindent 8 }}
         livenessProbe:
           {{- toYaml .Values.deployment.probes.livenessProbe | nindent 12 }}
         readinessProbe:
