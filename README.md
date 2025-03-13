@@ -16,5 +16,6 @@ minikube start --kubernetes-version=v1.31.6 --memory=4G --cpus=4
 ### Install App in K8S Cluster
 
 ```
-helm install RELEASE_NAME ./chart
+1. Update repository and tag in values.yaml
+2. helm install RELEASE_NAME ./chart
 ```
