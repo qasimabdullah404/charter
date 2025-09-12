@@ -4,6 +4,6 @@ metadata:
   name: {{ .Release.Name }}-env-config
   namespace: {{ .Values.namespace.name }}
 data:
-  REDIS_HOST: "{{ .Release.Name }}-redis-master.test.svc.cluster.local"
+  REDIS_HOST: "{{ .Release.Name }}-redis-master.{{ .Values.namespace.name }}.svc.cluster.local"
   REDIS_PORT: "6379"
   NODE_OPTIONS: "--dns-result-order=ipv4first"
